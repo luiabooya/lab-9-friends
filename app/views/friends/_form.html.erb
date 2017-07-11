@@ -38,7 +38,7 @@
 
   <div class="field">
     <%= f.label :level %>
-    <%= f.number_field :level %>
+    <%= f.select :level, Friend::FRIENDSHIP_LEVELS, prompt: "Select..." %>
   </div>
 
   <div class="actions">
