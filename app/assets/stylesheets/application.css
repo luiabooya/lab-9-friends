@@ -13,3 +13,7 @@
  *= require_tree .
  *= require_self
  */
+
+.uploaded_photo {
+	height: 100px;
+}
