@@ -25,16 +25,14 @@ class FriendsController < ApplicationController
   # POST /friends.json
   def create
     @friend = Friend.new(friend_params)
-
-    respond_to do |format|
       if @friend.save
-        format.html { redirect_to @friend, notice: 'Friend was successfully created.' }
-        format.json { render :show, status: :created, location: @friend }
+        # Provide an email confirmation if all is good...
+          FriendMailer.new_friend_msg(@friend).deliver
+        # Now a page confirmation as well...
+          redirect_to @friend, notice: "#{@friend.nickname} has been added as a friend and notified by email."
       else
-        format.html { render :new }
-        format.json { render json: @friend.errors, status: :unprocessable_entity }
+        render action: 'new'
       end
-    end
   end
 
   # PATCH/PUT /friends/1
@@ -55,10 +53,9 @@ class FriendsController < ApplicationController
   # DELETE /friends/1.json
   def destroy
     @friend.destroy
-    respond_to do |format|
-      format.html { redirect_to friends_url, notice: 'Friend was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+      FriendMailer.remove_friend_msg(@friend).deliver
+      flash[:notice] = "#{@friend.nickname} has been removed as a friend and insulted by email."
+      redirect_to friends_url
   end
 
   private
@@ -71,4 +68,5 @@ class FriendsController < ApplicationController
     def friend_params
       params.require(:friend).permit(:name, :nickname, :email, :phone, :website, :level)
     end
+    
 end
